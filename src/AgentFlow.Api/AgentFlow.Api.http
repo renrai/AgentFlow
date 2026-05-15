@@ -1,0 +1,9 @@
+@AgentFlow_Api_HostAddress = http://localhost:8080
+
+GET {{AgentFlow_Api_HostAddress}}/system/info
+Accept: application/json
+
+###
+
+GET {{AgentFlow_Api_HostAddress}}/health/ready
+Accept: application/json

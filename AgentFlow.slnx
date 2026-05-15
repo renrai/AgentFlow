@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AgentFlow.Api/AgentFlow.Api.csproj" />
+    <Project Path="src/AgentFlow.Application/AgentFlow.Application.csproj" />
+    <Project Path="src/AgentFlow.Contracts/AgentFlow.Contracts.csproj" />
+    <Project Path="src/AgentFlow.Domain/AgentFlow.Domain.csproj" />
+    <Project Path="src/AgentFlow.Infrastructure/AgentFlow.Infrastructure.csproj" />
+    <Project Path="src/AgentFlow.Worker/AgentFlow.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AgentFlow.IntegrationTests/AgentFlow.IntegrationTests.csproj" />
+    <Project Path="tests/AgentFlow.UnitTests/AgentFlow.UnitTests.csproj" />
+  </Folder>
+</Solution>
