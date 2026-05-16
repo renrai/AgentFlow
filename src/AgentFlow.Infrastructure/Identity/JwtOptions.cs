@@ -1,4 +1,4 @@
-namespace AgentFlow.Api.Auth;
+namespace AgentFlow.Infrastructure.Identity;
 
 public sealed class JwtOptions
 {

@@ -1,3 +1,5 @@
+using AgentFlow.Application.Abstractions.Persistence;
+using AgentFlow.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +17,11 @@ public static class DependencyInjection
             options.UseNpgsql(
                 connectionString,
                 npgsql => npgsql.MigrationsAssembly(typeof(AgentFlowDbContext).Assembly.FullName)));
+
+        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<AgentFlowDbContext>());
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ITenantRepository, TenantRepository>();
+        services.AddScoped<IWorkflowRepository, WorkflowRepository>();
 
         return services;
     }

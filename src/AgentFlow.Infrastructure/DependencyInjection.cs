@@ -1,7 +1,9 @@
 using AgentFlow.Infrastructure.Caching;
+using AgentFlow.Infrastructure.Identity;
 using AgentFlow.Infrastructure.Messaging;
 using AgentFlow.Infrastructure.Observability;
 using AgentFlow.Infrastructure.Persistence;
+using AgentFlow.Infrastructure.Time;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,9 +17,11 @@ public static class DependencyInjection
         string serviceName,
         bool includeAspNetCoreInstrumentation = true)
     {
+        services.AddPlatformClock();
         services.AddPersistence(configuration);
         services.AddRedis(configuration);
         services.AddRabbitMq(configuration);
+        services.AddPlatformIdentity(configuration);
         services.AddPlatformOpenTelemetry(configuration, serviceName, includeAspNetCoreInstrumentation);
 
         return services;
