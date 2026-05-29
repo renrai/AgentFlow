@@ -7,5 +7,6 @@ public sealed record WorkflowExecutionRequestedV1(
     DateTimeOffset OccurredAt,
     Guid TenantId,
     Guid WorkflowId,
-    Guid WorkflowVersionId,
-    Guid ExecutionId) : IIntegrationEvent;
+    int WorkflowVersion,
+    Guid ExecutionId,
+    string? TriggerPayload) : IIntegrationEvent;

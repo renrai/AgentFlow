@@ -6,6 +6,7 @@ using AgentFlow.Application;
 using AgentFlow.Application.Abstractions.Identity;
 using AgentFlow.Application.Abstractions.Tenancy;
 using AgentFlow.Infrastructure;
+using AgentFlow.Infrastructure.Identity;
 using AgentFlow.Infrastructure.Logging;
 using AgentFlow.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -15,10 +16,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddPlatformJsonLogging();
 
 builder.Services.AddApplication();
+builder.Services.AddIdentityApplication();
 builder.Services.AddInfrastructure(
     builder.Configuration,
     builder.Environment.ApplicationName,
     includeAspNetCoreInstrumentation: true);
+builder.Services.AddPlatformIdentity(builder.Configuration);
 builder.Services.AddApiAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 builder.Services.AddHealthChecks();
@@ -60,6 +63,7 @@ app.MapAuthEndpoints();
 app.MapUserEndpoints();
 app.MapTenantEndpoints();
 app.MapWorkflowEndpoints();
+app.MapExecutionEndpoints();
 
 app.MapHealthChecks("/health/live").AllowAnonymous();
 app.MapHealthChecks("/health/ready").AllowAnonymous();

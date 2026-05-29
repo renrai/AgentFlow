@@ -1,5 +1,4 @@
 using AgentFlow.Infrastructure.Caching;
-using AgentFlow.Infrastructure.Identity;
 using AgentFlow.Infrastructure.Messaging;
 using AgentFlow.Infrastructure.Observability;
 using AgentFlow.Infrastructure.Persistence;
@@ -21,7 +20,6 @@ public static class DependencyInjection
         services.AddPersistence(configuration);
         services.AddRedis(configuration);
         services.AddRabbitMq(configuration);
-        services.AddPlatformIdentity(configuration);
         services.AddPlatformOpenTelemetry(configuration, serviceName, includeAspNetCoreInstrumentation);
 
         return services;

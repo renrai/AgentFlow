@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(anthropic-skills:dotnet-backend-ddd)",
+      "Skill(anthropic-skills:dotnet-backend-ddd:*)",
+      "Skill(anthropic-skills:nextjs-react)",
+      "Skill(anthropic-skills:nextjs-react:*)",
+      "PowerShell(dotnet --version)"
+    ]
+  }
+}
