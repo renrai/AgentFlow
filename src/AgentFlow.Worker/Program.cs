@@ -12,7 +12,7 @@ builder.Services.AddInfrastructure(
     builder.Configuration,
     builder.Environment.ApplicationName,
     includeAspNetCoreInstrumentation: false);
-builder.Services.AddWorkflowExecution();
+builder.Services.AddWorkflowExecution(builder.Configuration);
 
 var host = builder.Build();
 await host.RunAsync();

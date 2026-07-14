@@ -64,6 +64,7 @@ app.MapUserEndpoints();
 app.MapTenantEndpoints();
 app.MapWorkflowEndpoints();
 app.MapExecutionEndpoints();
+app.MapWebhookEndpoints();
 
 app.MapHealthChecks("/health/live").AllowAnonymous();
 app.MapHealthChecks("/health/ready").AllowAnonymous();

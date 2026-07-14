@@ -29,6 +29,7 @@ public sealed class GetWorkflowHandler(
             workflow.Description,
             workflow.Status.ToString(),
             workflow.Version,
+            workflow.WebhookToken,
             workflow.CreatedAtUtc,
             workflow.UpdatedAtUtc,
             workflow.Nodes.Select(n => new NodeResult(n.Id, n.Type, n.Name, n.PositionX, n.PositionY, n.Configuration)).ToList(),

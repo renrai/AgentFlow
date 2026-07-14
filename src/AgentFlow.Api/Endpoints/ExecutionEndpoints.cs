@@ -3,6 +3,7 @@ using AgentFlow.Application.Executions.GetExecution;
 using AgentFlow.Application.Executions.ListExecutions;
 using AgentFlow.Application.Executions.StartExecution;
 using AgentFlow.Application.SharedKernel;
+using AgentFlow.Domain.Executions;
 
 namespace AgentFlow.Api.Endpoints;
 
@@ -33,22 +34,63 @@ public static class ExecutionEndpoints
         workflowGroup.MapGet("/", async (
             Guid tenantId,
             Guid workflowId,
-            int? limit,
+            string? status,
+            DateTimeOffset? from,
+            DateTimeOffset? to,
+            int? page,
+            int? pageSize,
             ICurrentUser currentUser,
             ListExecutionsHandler handler,
             CancellationToken cancellationToken) =>
         {
             var userId = RequireUserId(currentUser);
-            var query = new ListExecutionsQuery(workflowId, tenantId, userId, limit ?? 50);
+            var query = new ListExecutionsQuery(
+                tenantId,
+                userId,
+                workflowId,
+                ParseStatus(status),
+                from,
+                to,
+                page ?? 1,
+                pageSize ?? 20);
+
             var result = await handler.HandleAsync(query, cancellationToken).ConfigureAwait(false);
             return Results.Ok(result);
         })
-        .WithName("ListExecutions")
-        .WithSummary("Lists recent executions of a workflow.");
+        .WithName("ListWorkflowExecutions")
+        .WithSummary("Lists executions of a specific workflow with optional filters.");
 
         var tenantGroup = app.MapGroup("/tenants/{tenantId:guid}/executions")
             .WithTags("Executions")
             .RequireAuthorization();
+
+        tenantGroup.MapGet("/", async (
+            Guid tenantId,
+            string? status,
+            DateTimeOffset? from,
+            DateTimeOffset? to,
+            int? page,
+            int? pageSize,
+            ICurrentUser currentUser,
+            ListExecutionsHandler handler,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = RequireUserId(currentUser);
+            var query = new ListExecutionsQuery(
+                tenantId,
+                userId,
+                WorkflowId: null,
+                ParseStatus(status),
+                from,
+                to,
+                page ?? 1,
+                pageSize ?? 20);
+
+            var result = await handler.HandleAsync(query, cancellationToken).ConfigureAwait(false);
+            return Results.Ok(result);
+        })
+        .WithName("ListTenantExecutions")
+        .WithSummary("Lists all executions in a tenant with optional filters.");
 
         tenantGroup.MapGet("/{executionId:guid}", async (
             Guid tenantId,
@@ -65,6 +107,18 @@ public static class ExecutionEndpoints
         .WithSummary("Returns an execution with all its steps.");
 
         return app;
+    }
+
+    private static ExecutionStatus? ParseStatus(string? status)
+    {
+        if (string.IsNullOrWhiteSpace(status))
+            return null;
+
+        if (Enum.TryParse<ExecutionStatus>(status, ignoreCase: true, out var parsed))
+            return parsed;
+
+        throw new ValidationException(
+            $"Invalid status '{status}'. Valid values: {string.Join(", ", Enum.GetNames<ExecutionStatus>())}.");
     }
 
     private static Guid RequireUserId(ICurrentUser currentUser)

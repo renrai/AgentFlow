@@ -43,6 +43,7 @@ public sealed class CreateWorkflowHandler(
             workflow.Description,
             workflow.Status.ToString(),
             workflow.Version,
+            workflow.WebhookToken,
             workflow.CreatedAtUtc);
     }
 }

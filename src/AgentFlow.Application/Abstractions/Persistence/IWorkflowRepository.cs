@@ -8,6 +8,8 @@ public interface IWorkflowRepository
 
     Task<Workflow?> GetByIdAsync(Guid workflowId, Guid tenantId, CancellationToken cancellationToken = default);
 
+    Task<Workflow?> GetByWebhookTokenAsync(string token, CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<WorkflowSummary>> ListByTenantAsync(Guid tenantId, CancellationToken cancellationToken = default);
 }
 

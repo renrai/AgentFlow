@@ -1,7 +1,13 @@
+using AgentFlow.Domain.Executions;
+
 namespace AgentFlow.Application.Executions.ListExecutions;
 
 public sealed record ListExecutionsQuery(
-    Guid WorkflowId,
     Guid TenantId,
     Guid UserId,
-    int Limit = 50);
+    Guid? WorkflowId = null,
+    ExecutionStatus? Status = null,
+    DateTimeOffset? From = null,
+    DateTimeOffset? To = null,
+    int Page = 1,
+    int PageSize = 20);

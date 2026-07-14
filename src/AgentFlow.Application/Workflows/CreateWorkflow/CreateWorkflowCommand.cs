@@ -16,4 +16,5 @@ public sealed record CreateWorkflowResult(
     string? Description,
     string Status,
     int Version,
+    string WebhookToken,
     DateTimeOffset CreatedAtUtc);

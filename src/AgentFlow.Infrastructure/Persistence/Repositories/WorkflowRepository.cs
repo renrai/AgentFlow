@@ -14,6 +14,12 @@ internal sealed class WorkflowRepository(AgentFlowDbContext dbContext) : IWorkfl
             .Include(w => w.Edges)
             .FirstOrDefaultAsync(w => w.Id == workflowId && w.TenantId == tenantId, cancellationToken);
 
+    public Task<Workflow?> GetByWebhookTokenAsync(string token, CancellationToken cancellationToken = default)
+        => dbContext.Workflows
+            .Include(w => w.Nodes)
+            .Include(w => w.Edges)
+            .FirstOrDefaultAsync(w => w.WebhookToken == token, cancellationToken);
+
     public async Task<IReadOnlyList<WorkflowSummary>> ListByTenantAsync(
         Guid tenantId,
         CancellationToken cancellationToken = default)

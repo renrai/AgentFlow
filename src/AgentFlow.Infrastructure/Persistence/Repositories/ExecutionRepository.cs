@@ -1,4 +1,5 @@
 using AgentFlow.Application.Abstractions.Persistence;
+using AgentFlow.Application.SharedKernel;
 using AgentFlow.Domain.Executions;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,17 +22,32 @@ internal sealed class ExecutionRepository(AgentFlowDbContext dbContext) : IExecu
             .Include(e => e.Steps)
             .FirstOrDefaultAsync(e => e.Id == executionId, cancellationToken);
 
-    public async Task<IReadOnlyList<ExecutionSummary>> ListByWorkflowAsync(
-        Guid workflowId,
-        Guid tenantId,
-        int limit,
+    public async Task<PagedResult<ExecutionSummary>> SearchAsync(
+        ExecutionSearchCriteria criteria,
         CancellationToken cancellationToken = default)
     {
-        return await dbContext.WorkflowExecutions
+        var query = dbContext.WorkflowExecutions
             .AsNoTracking()
-            .Where(e => e.WorkflowId == workflowId && e.TenantId == tenantId)
+            .Where(e => e.TenantId == criteria.TenantId);
+
+        if (criteria.WorkflowId is { } workflowId)
+            query = query.Where(e => e.WorkflowId == workflowId);
+
+        if (criteria.Status is { } status)
+            query = query.Where(e => e.Status == status);
+
+        if (criteria.From is { } from)
+            query = query.Where(e => e.CreatedAtUtc >= from);
+
+        if (criteria.To is { } to)
+            query = query.Where(e => e.CreatedAtUtc <= to);
+
+        var totalCount = await query.CountAsync(cancellationToken).ConfigureAwait(false);
+
+        var items = await query
             .OrderByDescending(e => e.CreatedAtUtc)
-            .Take(limit)
+            .Skip((criteria.Page - 1) * criteria.PageSize)
+            .Take(criteria.PageSize)
             .Select(e => new ExecutionSummary(
                 e.Id,
                 e.WorkflowId,
@@ -42,5 +58,7 @@ internal sealed class ExecutionRepository(AgentFlowDbContext dbContext) : IExecu
                 e.CompletedAtUtc))
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
+
+        return new PagedResult<ExecutionSummary>(items, totalCount, criteria.Page, criteria.PageSize);
     }
 }

@@ -5,6 +5,7 @@ using AgentFlow.Application.Workflows.CreateWorkflow;
 using AgentFlow.Application.Workflows.GetWorkflow;
 using AgentFlow.Application.Workflows.ListWorkflows;
 using AgentFlow.Application.Workflows.PublishWorkflow;
+using AgentFlow.Application.Workflows.RotateWebhookToken;
 using AgentFlow.Application.Workflows.UpdateWorkflow;
 using AgentFlow.Domain.Workflows;
 
@@ -118,6 +119,20 @@ public static class WorkflowEndpoints
         })
         .WithName("ArchiveWorkflow")
         .WithSummary("Archives a workflow, preventing further modifications.");
+
+        group.MapPost("/{workflowId:guid}/webhook/rotate", async (
+            Guid tenantId,
+            Guid workflowId,
+            ICurrentUser currentUser,
+            RotateWebhookTokenHandler handler,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = RequireUserId(currentUser);
+            var result = await handler.HandleAsync(new RotateWebhookTokenCommand(workflowId, tenantId, userId), cancellationToken).ConfigureAwait(false);
+            return Results.Ok(result);
+        })
+        .WithName("RotateWebhookToken")
+        .WithSummary("Generates a new webhook token for the workflow, invalidating the previous one.");
 
         return app;
     }

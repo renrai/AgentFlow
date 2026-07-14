@@ -7,7 +7,10 @@ public sealed class ListExecutionsHandler(
     IExecutionRepository executions,
     ITenantRepository tenants)
 {
-    public async Task<IReadOnlyList<ExecutionSummary>> HandleAsync(
+    private const int MaxPageSize = 200;
+    private const int DefaultPageSize = 20;
+
+    public async Task<PagedResult<ExecutionSummary>> HandleAsync(
         ListExecutionsQuery query,
         CancellationToken cancellationToken)
     {
@@ -18,10 +21,23 @@ public sealed class ListExecutionsHandler(
         if (!isMember)
             throw new ForbiddenException("You are not a member of this tenant.");
 
-        var limit = query.Limit <= 0 ? 50 : Math.Min(query.Limit, 200);
+        if (query.From is { } from && query.To is { } to && from > to)
+            throw new ValidationException("'from' must be earlier than or equal to 'to'.");
 
-        return await executions
-            .ListByWorkflowAsync(query.WorkflowId, query.TenantId, limit, cancellationToken)
-            .ConfigureAwait(false);
+        var page = query.Page < 1 ? 1 : query.Page;
+        var pageSize = query.PageSize <= 0
+            ? DefaultPageSize
+            : Math.Min(query.PageSize, MaxPageSize);
+
+        var criteria = new ExecutionSearchCriteria(
+            query.TenantId,
+            query.WorkflowId,
+            query.Status,
+            query.From,
+            query.To,
+            page,
+            pageSize);
+
+        return await executions.SearchAsync(criteria, cancellationToken).ConfigureAwait(false);
     }
 }

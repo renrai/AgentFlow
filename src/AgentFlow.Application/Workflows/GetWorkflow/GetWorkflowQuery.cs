@@ -8,6 +8,7 @@ public sealed record WorkflowResult(
     string? Description,
     string Status,
     int Version,
+    string WebhookToken,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset UpdatedAtUtc,
     IReadOnlyList<NodeResult> Nodes,

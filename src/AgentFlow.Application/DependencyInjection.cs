@@ -6,11 +6,13 @@ using AgentFlow.Application.Identity.Login;
 using AgentFlow.Application.Identity.Register;
 using AgentFlow.Application.Tenants.CreateTenant;
 using AgentFlow.Application.Tenants.GetMyTenants;
+using AgentFlow.Application.Webhooks.TriggerWebhook;
 using AgentFlow.Application.Workflows.ArchiveWorkflow;
 using AgentFlow.Application.Workflows.CreateWorkflow;
 using AgentFlow.Application.Workflows.GetWorkflow;
 using AgentFlow.Application.Workflows.ListWorkflows;
 using AgentFlow.Application.Workflows.PublishWorkflow;
+using AgentFlow.Application.Workflows.RotateWebhookToken;
 using AgentFlow.Application.Workflows.UpdateWorkflow;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,10 +35,13 @@ public static class DependencyInjection
         services.AddScoped<ArchiveWorkflowHandler>();
         services.AddScoped<GetWorkflowHandler>();
         services.AddScoped<ListWorkflowsHandler>();
+        services.AddScoped<RotateWebhookTokenHandler>();
 
         services.AddScoped<StartExecutionHandler>();
         services.AddScoped<GetExecutionHandler>();
         services.AddScoped<ListExecutionsHandler>();
+
+        services.AddScoped<TriggerWebhookHandler>();
 
         return services;
     }

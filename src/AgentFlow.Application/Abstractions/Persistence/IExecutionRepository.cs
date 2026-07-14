@@ -1,3 +1,4 @@
+using AgentFlow.Application.SharedKernel;
 using AgentFlow.Domain.Executions;
 
 namespace AgentFlow.Application.Abstractions.Persistence;
@@ -10,12 +11,19 @@ public interface IExecutionRepository
 
     Task<WorkflowExecution?> GetByIdAsync(Guid executionId, CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<ExecutionSummary>> ListByWorkflowAsync(
-        Guid workflowId,
-        Guid tenantId,
-        int limit,
+    Task<PagedResult<ExecutionSummary>> SearchAsync(
+        ExecutionSearchCriteria criteria,
         CancellationToken cancellationToken = default);
 }
+
+public sealed record ExecutionSearchCriteria(
+    Guid TenantId,
+    Guid? WorkflowId,
+    ExecutionStatus? Status,
+    DateTimeOffset? From,
+    DateTimeOffset? To,
+    int Page,
+    int PageSize);
 
 public sealed record ExecutionSummary(
     Guid ExecutionId,

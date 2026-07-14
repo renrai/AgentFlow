@@ -39,6 +39,8 @@ services:
       RabbitMq__UserName: agentflow
       RabbitMq__Password: agentflow
       OpenTelemetry__OtlpEndpoint: http://otel-collector:4317
+      AiProviders__Anthropic__ApiKey: ${ANTHROPIC_API_KEY:-}
+      AiProviders__OpenAi__ApiKey: ${OPENAI_API_KEY:-}
     depends_on:
       postgres:
         condition: service_healthy

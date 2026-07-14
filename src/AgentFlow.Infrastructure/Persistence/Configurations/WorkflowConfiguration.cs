@@ -39,6 +39,14 @@ internal sealed class WorkflowConfiguration : IEntityTypeConfiguration<Workflow>
             .HasColumnName("version")
             .IsRequired();
 
+        builder.Property(w => w.WebhookToken)
+            .HasColumnName("webhook_token")
+            .HasMaxLength(80)
+            .IsRequired();
+
+        builder.HasIndex(w => w.WebhookToken)
+            .IsUnique();
+
         builder.Property(w => w.CreatedAtUtc)
             .HasColumnName("created_at_utc")
             .HasColumnType("timestamp with time zone")
